@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:card="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+                                    card:cardBackgroundColor="@color/card_background"
+                                    card:cardCornerRadius="2dp"
+                                    card:cardElevation="2dp"
+                                    card:cardMaxElevation="@dimen/cardview_default_elevation">
+    <!--cardMaxElevation：最大卡片阴影的宽度-->
+    <!--cardElevation:卡片阴影的宽度-->
+    <!--cardBackgroundColor:卡片的背景颜色-->
+    <!--cardCornerRadius ：卡片的圆角半径-->
+              android:layout_margin="10dp"
+>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:orientation="vertical"
+        >
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:text="Title"/>
+
+    <TextView
+        android:id="@+id/content"
+        android:hint="content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textSize="17dp"
+        android:ellipsize="end"
+        android:maxEms="11"
+        android:singleLine="true"
+        android:layout_marginTop="15dp"
+        android:text="content"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/author"
+            android:hint="author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="author"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/time"
+            android:hint="time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="time"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

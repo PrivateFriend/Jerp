@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Jerp</string>
+
+        <string name="hello_world">Hello world!</string>
+        <string name="action_settings">Settings</string>
+        <string name="action_search">Search</string>
+        <string name="drawer_open">Open</string>
+        <string name="drawer_close">Close</string>
+     
+        <string name="nav_item_home">公司公告</string>
+        <string name="nav_item_friends">Friends</string>
+        <string name="nav_item_notifications">Messages</string>
+    <string name="nav_item_my">我的项目</string>
+     
+        <!-- navigation drawer item labels  -->
+        <string-array name="nav_drawer_labels">
+            <item>@string/nav_item_home</item>
+            <item>@string/nav_item_friends</item>
+            <item>@string/nav_item_notifications</item>
+    <item>@string/nav_item_my</item>
+        </string-array>
+     
+        <string name="title_messages">Messages</string>
+        <string name="title_friends">Friends</string>
+        <string name="title_home">公告栏</string>
+    <string name="my">我的项目</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_news">NewsActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_add_news">AddNewsActivity</string>
+    <string name="title_activity_user_profile">用户信息</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>

@@ -1,0 +1,48 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "23.0.0"
+
+    defaultConfig {
+        applicationId "com.huan.jerp"
+        minSdkVersion 14
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('libs/xUtils-2.6.14.jar')
+    compile files('libs/volley.jar')
+    compile files('libs/eventbus.jar')
+    compile files('libs/nineoldandroids-library-2.4.0.jar')
+    compile 'com.android.support:appcompat-v7:22.0.0'
+    //compile 'com.android.support:recyclerview-v7:21.0.+'
+    compile 'com.android.support:design:22.2.0'
+    //Core card library
+    compile 'com.github.gabrielemariotti.cards:cardslib-core:2.1.0'
+    //Optional for built-in cards
+    compile 'com.github.gabrielemariotti.cards:cardslib-cards:2.1.0'
+    //Optional for RecyclerView
+    compile 'com.github.gabrielemariotti.cards:cardslib-recyclerview:2.1.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.baoyz.swipemenulistview:library:1.2.1'
+
+    //以下SDK开发者请根据需要自行选择
+    //bmob-sdk ：Bmob的android sdk包
+    compile 'cn.bmob.android:bmob-sdk:3.4.3'
+
+    //bmob-push：Bmob的推送包
+    compile 'cn.bmob.android:bmob-push:0.6'
+
+
+}

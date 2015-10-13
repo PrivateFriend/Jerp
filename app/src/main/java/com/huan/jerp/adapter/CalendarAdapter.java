@@ -52,8 +52,7 @@ public class CalendarAdapter extends BaseAdapter {
 	private String sys_day = "";
 	private int colorDataPosition = -1;
 	private boolean isClickData = false;
-
-	private Boolean[] b=new Boolean[30];
+	private Integer[] t;
 
 	public CalendarAdapter() {
 		Date date = new Date();
@@ -65,12 +64,12 @@ public class CalendarAdapter extends BaseAdapter {
 	}
 
 	public CalendarAdapter(Context context, Resources rs, int jumpMonth,
-			int jumpYear, int year_c, int month_c, int day_c,Boolean[] boo) {
+			int jumpYear, int year_c, int month_c, int day_c,Integer[] ti) {
 		this();
 		this.context = context;
 		sc = new SpecialCalendar();
 		lc = new LunarCalendar();
-		b=boo;
+		t=ti;
 		this.res = rs;
 
 		int stepYear = year_c + jumpYear;
@@ -102,6 +101,7 @@ public class CalendarAdapter extends BaseAdapter {
 		getCalendar(Integer.parseInt(currentYear),
 				Integer.parseInt(currentMonth));
 
+
 	}
 
 	public CalendarAdapter(Context context, Resources rs, int year, int month,
@@ -121,7 +121,7 @@ public class CalendarAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return dayNumber.length;
+		return dayNumber==null?0:dayNumber.length;
 	}
 
 	@Override
@@ -166,21 +166,34 @@ public class CalendarAdapter extends BaseAdapter {
 			textView.setTextColor(Color.BLACK);// 当月字体设黑
 
 			if(position-dayOfWeek>=0){
-				if(b[position-dayOfWeek])
-					textView.setTextColor(Color.RED);
+				switch (t[position-dayOfWeek]){
+					//正常
+					case 0:
+						break;
+					//请假
+					case 1:
+						textView.setTextColor(context.getResources().getColor(R.color.dark_red));
+						break;
+					//迟到
+					case 2:
+						textView.setTextColor(context.getResources().getColor(R.color.deep_purple));
+						break;
+					default:
+						break;
+				}
 			}
 			// drawable = new ColorDrawable(Color.rgb(23, 126, 214));
 			if (position % 7 == 0 || position % 7 == 6) {
 				// 当前月信息显示
-				textView.setTextColor(Color.rgb(23, 126, 214));// 当月字体设黑
+				textView.setTextColor(Color.rgb(23, 126, 214));// 周末字体设置
 			}
 		}
 
 		if (colorDataPosition == position) {
 			// 设置当天的背景
-			textView.setTextColor(Color.WHITE);
+//			textView.setTextColor(Color.WHITE);
 
-			textView.setBackgroundResource(R.drawable.bg_circle);
+//			textView.setBackgroundResource(R.drawable.bg_circle);
 		} else {
 			textView.setBackgroundColor(res
 					.getColor(android.R.color.transparent));
@@ -195,6 +208,7 @@ public class CalendarAdapter extends BaseAdapter {
 		dayOfWeek = sc.getWeekdayOfMonth(year, month); // 某月第一天为星期几
 		lastDaysOfMonth = sc.getDaysOfMonth(isLeapyear, month - 1); // 上一个月的总天数
 		getweek(year, month);
+
 	}
 
 	// 将一个月中的每一天的值添加入数组dayNuber中

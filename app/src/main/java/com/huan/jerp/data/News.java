@@ -1,6 +1,7 @@
 package com.huan.jerp.data;
 
-import java.lang.reflect.Array;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import cn.bmob.v3.BmobObject;
 
@@ -9,7 +10,7 @@ import cn.bmob.v3.BmobObject;
  */
 
 
-public class News extends BmobObject {
+public class News extends BmobObject implements Parcelable {
 
     private String title;
     private String content;
@@ -19,18 +20,6 @@ public class News extends BmobObject {
     }
 
     private String author;
-
-    public Array getEnable() {
-        return enable;
-    }
-
-    public void setEnable(Array enable) {
-        this.enable = enable;
-    }
-
-    private Array  enable;   //可见性
-
-
 
     public void setTitle(String title) {
         this.title = title;
@@ -54,5 +43,34 @@ public class News extends BmobObject {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.title);
+        dest.writeString(this.content);
+        dest.writeString(this.author);
+    }
+
+    public News() {
+    }
+
+    protected News(Parcel in) {
+        this.title = in.readString();
+        this.content = in.readString();
+        this.author = in.readString();
+    }
+
+    public static final Parcelable.Creator<News> CREATOR = new Parcelable.Creator<News>() {
+        public News createFromParcel(Parcel source) {
+            return new News(source);
+        }
+
+        public News[] newArray(int size) {
+            return new News[size];
+        }
+    };
 }

@@ -5,8 +5,8 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
                                     card:cardBackgroundColor="@color/card_background"
-                                    card:cardCornerRadius="2dp"
-                                    card:cardElevation="2dp"
+                                    card:cardCornerRadius="3dp"
+                                    card:cardElevation="3dp"
                                     card:cardMaxElevation="@dimen/cardview_default_elevation">
     <!--cardMaxElevation：最大卡片阴影的宽度-->
     <!--cardElevation:卡片阴影的宽度-->
@@ -29,6 +29,7 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:textSize="20dp"
+        android:singleLine="true"
         android:textStyle="bold"
         android:text="Title"/>
 
@@ -40,14 +41,16 @@
         android:gravity="center_vertical"
         android:textSize="17dp"
         android:ellipsize="end"
+        android:maxLines="3"
         android:maxEms="11"
-        android:singleLine="true"
         android:layout_marginTop="15dp"
         android:text="content"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp">
 
         <TextView
             android:id="@+id/author"
@@ -55,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="author"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"/>
         <TextView
             android:id="@+id/time"
@@ -62,7 +66,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="time"
-            android:layout_weight="1"/>
+
+            android:gravity="right"/>
 
     </LinearLayout>
 

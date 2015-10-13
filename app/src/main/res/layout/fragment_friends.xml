@@ -1,56 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout
+    android:id="@+id/swipe_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:layout_height="match_parent"
+    >
 
-
-    <com.huan.jerp.address.ClearEditText
-        android:id="@+id/filter_edit"
-        android:layout_marginTop="5dip"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/search_bar_edit_selector"
-        android:drawableLeft="@drawable/search_bar_icon_normal"
-        android:hint="请输入关键字"
-        android:singleLine="true"
-        android:textSize="15.0dip" />
+        android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-
-        <ListView
-            android:id="@+id/country_lvcountry"
+        <com.huan.jerp.address.ClearEditText
+            android:id="@+id/filter_edit"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:divider="@null" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:background="@drawable/search_bar_edit_selector"
+            android:drawableLeft="@drawable/search_bar_icon_normal"
+            android:hint="请输入关键字"
+            android:singleLine="true"
+            android:textSize="15.0dip"/>
 
-        <com.baoyz.swipemenulistview.SwipeMenuListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <TextView
-            android:id="@+id/dialog"
-            android:layout_width="80.0dip"
-            android:layout_height="80.0dip"
-            android:layout_gravity="center"
-            android:background="@drawable/show_head_toast_bg"
-            android:gravity="center"
-            android:textColor="#ffffffff"
-            android:textSize="30.0dip"
-            android:visibility="invisible" />
-
-        <com.huan.jerp.address.SideBar
-            android:id="@+id/sidrbar"
-            android:layout_width="30.0dip"
-            android:layout_height="fill_parent"
-            android:layout_gravity="right|center" />
-    </FrameLayout>
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
 
+            <ListView
+                android:id="@+id/country_lvcountry"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:divider="@null"/>
+
+            <com.baoyz.swipemenulistview.SwipeMenuListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/dialog"
+                android:layout_width="80.0dip"
+                android:layout_height="80.0dip"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/text_color_primary"
+                android:textSize="70dip"
+                android:visibility="invisible"/>
+
+            <com.huan.jerp.address.SideBar
+                android:id="@+id/sidrbar"
+                android:layout_width="30.0dip"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right|center"/>
+
+        </FrameLayout>
+    </LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
 
 
-</LinearLayout>

@@ -3,6 +3,8 @@ package com.huan.jerp.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -10,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -119,10 +122,10 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //搜索按钮的功能
-        if (id == R.id.action_search){
-            Toast.makeText(getApplicationContext(), "Search action is selected!", Toast.LENGTH_SHORT).show();
-            return true;
-        }
+//        if (id == R.id.action_search){
+//            Toast.makeText(getApplicationContext(), "Search action is selected!", Toast.LENGTH_SHORT).show();
+//            return true;
+//        }
         //设置选项
         Intent intent;
         switch (id){
@@ -130,10 +133,10 @@ public class MainActivity extends ActionBarActivity {
                 //打开抽屉
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
-            case R.id.setting:
-                return true;
-            case R.id.sync:
-                return true;
+//            case R.id.setting:
+//                return true;
+//            case R.id.sync:
+//                return true;
             case R.id.reLogin:
                 //注销
                 intent = new Intent(MainActivity.this, Login.class);
@@ -176,14 +179,14 @@ public class MainActivity extends ActionBarActivity {
                 }
 
                 break;
-            case 3:
-                if (blankFragment==null){
-                    blankFragment = new BlankFragment();
-                    transaction.add(R.id.container_body,blankFragment);
-                }else {
-                    transaction.show(blankFragment);
-                }
-                break;
+//            case 3:
+//                if (blankFragment==null){
+//                    blankFragment = new BlankFragment();
+//                    transaction.add(R.id.container_body,blankFragment);
+//                }else {
+//                    transaction.show(blankFragment);
+//                }
+//                break;
         }
         transaction.commit();
     }
@@ -198,9 +201,9 @@ public class MainActivity extends ActionBarActivity {
         if (messagesFragment != null) {
             transaction.hide(messagesFragment);
         }
-        if (blankFragment != null) {
-            transaction.hide(blankFragment);
-        }
+//        if (blankFragment != null) {
+//            transaction.hide(blankFragment);
+//        }
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -226,14 +229,14 @@ public class MainActivity extends ActionBarActivity {
                                 mToolbar.setTitle(menuItem.getTitle());
                                 menuItem.setChecked(true);
                                 break;
-                            case R.id.info_yc:
-                                setTabSelection(3);
-                                mToolbar.setTitle(menuItem.getTitle());
-                                menuItem.setChecked(true);
-                                break;
-                            case R.id.setting:
-
-                                break;
+//                            case R.id.info_yc:
+//                                setTabSelection(3);
+//                                mToolbar.setTitle(menuItem.getTitle());
+//                                menuItem.setChecked(true);
+//                                break;
+//                            case R.id.setting:
+//
+//                                break;
                             case R.id.about:
 
                                 break;
@@ -252,4 +255,32 @@ public class MainActivity extends ActionBarActivity {
         //反注册EventBus
         EventBus.getDefault().unregister(this);
     }
-}
+
+    private static final int MSG_EXIT = 1;
+    private static final int MSG_EXIT_WAIT = 2;
+    private static final long EXIT_DELAY_TIME = 2000;
+    private Handler mHandle = new Handler() {
+        public void handleMessage(Message msg) {
+            switch(msg.what) {
+                case MSG_EXIT:
+                    if(mHandle.hasMessages(MSG_EXIT_WAIT)) {
+                        finish();
+                    } else {
+                        Toast.makeText(MainActivity.this, "再按一次返回键退出", Toast.LENGTH_SHORT).show();
+                        mHandle.sendEmptyMessageDelayed(MSG_EXIT_WAIT, EXIT_DELAY_TIME);
+                    }
+                    break;
+                case MSG_EXIT_WAIT:
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(KeyEvent.KEYCODE_BACK == keyCode) {
+            mHandle.sendEmptyMessage(MSG_EXIT);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }}

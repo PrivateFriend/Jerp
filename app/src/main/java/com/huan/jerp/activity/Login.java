@@ -64,13 +64,15 @@ public class Login extends AppCompatActivity {
             }
         });
 
+        b1.setVisibility(View.GONE);
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_login, menu);
-        return true;
+        return false;
     }
 
     @Override
@@ -87,32 +89,45 @@ public class Login extends AppCompatActivity {
 
     public void submit(String user,String pass){
 
-        BmobUser.loginByAccount(this, user, pass, new LogInListener<User>() {
-            @Override
-            public void done(User user, BmobException e) {
-                if(user!=null)
-                    Toast.makeText(getBaseContext(),"登录成功",Toast.LENGTH_SHORT);
-                //自动登录
-                if(checkBox.isChecked()){
-                    SharedPreferences preferences=getSharedPreferences("user", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor=preferences.edit();
-                    editor.putString("username",utext.getEditText().getText().toString());
-                    editor.putString("password",ptext.getEditText().getText().toString());
-                    editor.commit();
+        try {
+            BmobUser.loginByAccount(this, user, pass, new LogInListener<User>() {
+                @Override
+                public void done(User user, BmobException e) {
+                    if (user != null){
+
+                        //自动登录
+                        if (checkBox.isChecked()) {
+                            SharedPreferences preferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putString("username", utext.getEditText().getText().toString());
+                            editor.putString("password", ptext.getEditText().getText().toString());
+                            editor.commit();
+                        }
+
+                        Intent intent = new Intent(Login.this, MainActivity.class);
+                        Toast.makeText(getApplication(), "登录成功", Toast.LENGTH_SHORT).show();
+                        startActivity(intent);
+                        Login.this.finish();
+                    }else {
+                        e.getErrorCode();
+                        Toast.makeText(getApplication(),"用户名或密码错误",Toast.LENGTH_SHORT).show();
+                    }
+                    //记住密码
+                    if (cb_remember.isChecked()) {
+                        SharedPreferences preferences = getSharedPreferences("user_remember", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("username", utext.getEditText().getText().toString());
+                        editor.putString("password", ptext.getEditText().getText().toString());
+                        editor.commit();
+                    }
+
                 }
-                //记住密码
-                if(cb_remember.isChecked()){
-                    SharedPreferences preferences=getSharedPreferences("user_remember", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor=preferences.edit();
-                    editor.putString("username",utext.getEditText().getText().toString());
-                    editor.putString("password",ptext.getEditText().getText().toString());
-                    editor.commit();
-                }
-                Intent intent = new Intent(Login.this, MainActivity.class);
-                startActivity(intent);
-                Login.this.finish();
-            }
-        });
+            });
+
+        }catch (Exception e){
+            Toast.makeText(getApplication(),"用户名或密码错误",Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     public static void start(Activity activity) {

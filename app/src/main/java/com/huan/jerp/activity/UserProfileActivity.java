@@ -77,7 +77,7 @@ public class UserProfileActivity extends AppCompatActivity implements AppBarLayo
 
     private LinearLayout layout_phone;
 
-    private TextView tv_head, tv_nick, tv_sex, tv_address, tv_introduce, tv_phone, tv_creatTime;
+    private TextView tv_head, tv_nick, tv_sex, tv_address, tv_introduce, tv_phone, tv_creatTime,tv_sign;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +111,6 @@ public class UserProfileActivity extends AppCompatActivity implements AppBarLayo
     private void initDatas() {
         mUser = BmobUser.getCurrentUser(mContext, User.class);
         user_id = mUser.getObjectId();
-        System.out.println("id是："+user_id);
         BmobFile file=mUser.getPhoto();
         if (file!=null) {
             String icon_url =file.getFileUrl(mContext);
@@ -122,6 +121,7 @@ public class UserProfileActivity extends AppCompatActivity implements AppBarLayo
             Picasso.with(mContext).load(R.mipmap.ic_user).transform(new CircleTransformation()).into(user_icon);
         }
         nameView.setText(mUser.getName());
+        tv_sign.setText(mUser.getInfo());
         tv_nick.setText(mUser.getName());
         tv_sex.setText(mUser.getAddress());
         tv_address.setText(mUser.getDepartment());
@@ -130,13 +130,16 @@ public class UserProfileActivity extends AppCompatActivity implements AppBarLayo
         tv_creatTime.setText(mUser.getCreatedAt());
 
         Boolean sex=mUser.getSex();
-        System.out.println("sex="+sex);
-        if (!sex) {
-            sexView.setImageResource(R.mipmap.userinfo_icon_male);
-        }else{
-            sexView.setImageResource(R.mipmap.userinfo_icon_female);
-        }
+        //此处性别获取参数错误
+        try {
+            if (null==sex||!sex.booleanValue()) {
+                sexView.setImageResource(R.mipmap.userinfo_icon_male);
+            }else{
+                sexView.setImageResource(R.mipmap.userinfo_icon_female);
+            }
+        }catch(Exception e){
 
+        }
 
     }
 
@@ -174,22 +177,13 @@ public class UserProfileActivity extends AppCompatActivity implements AppBarLayo
 //                Intent intent=new Intent(mContext,UserInfoActivity.class);
 //                intent.putExtra(CURRENT_USER,mUser);
 //                startActivity(intent);
-                Toast.makeText(getBaseContext(), "修改资料", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplication(), "修改资料", Toast.LENGTH_SHORT).show();
             }
         });
         nameView= (TextView) findViewById(R.id.tv_vup_userName);
+        tv_sign= (TextView) findViewById(R.id.tv_vup_userSign);
         sexView= (ImageView) findViewById(R.id.iv_vup_sex);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_container);
-                 //设置刷新时动画的颜色，可以设置4个
-                 mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
-                 mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
-                     @Override
-                     public void onRefresh() {
-                         //加载信息
-                     }
-                 });
 
     }
 

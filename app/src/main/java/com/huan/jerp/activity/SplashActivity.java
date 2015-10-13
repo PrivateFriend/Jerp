@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.huan.jerp.R;
 import com.huan.jerp.data.User;
@@ -120,17 +121,38 @@ public class SplashActivity extends ActionBarActivity {
                     Login.start(SplashActivity.this);
                     SplashActivity.this.finish();
                 }else {
-                    BmobUser.loginByAccount(getBaseContext(), preferences.getString("username", ""), preferences.getString("password", ""), new LogInListener<User>() {
-                        @Override
-                        public void done(User user, BmobException e) {
-                            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            SplashActivity.this.finish();
-                        }
-                    });
-                }
 
-//                SplashActivity.this.finish();
+//
+//                    BmobUser.loginByAccount(getBaseContext(), preferences.getString("username", ""), preferences.getString("password", ""), new LogInListener<User>() {
+//                        @Override
+//                        public void done(User user, BmobException e) {
+//                            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+//                            startActivity(intent);
+//                            SplashActivity.this.finish();
+//                        }
+//                    });
+
+                    try {
+                        BmobUser.loginByAccount(getApplication(), preferences.getString("username", ""), preferences.getString("password", ""), new LogInListener<User>() {
+                            @Override
+                            public void done(User user, BmobException e) {
+                                if (user != null){
+                                    Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                                    Toast.makeText(getApplication(), "登录成功", Toast.LENGTH_SHORT).show();
+                                    startActivity(intent);
+                                    SplashActivity.this.finish();
+                                }else {
+                                    Toast.makeText(getApplication(),"用户名或密码错误",Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            }
+                        });
+
+                    }catch (Exception e){
+                        Toast.makeText(getApplication(),"用户名或密码错误",Toast.LENGTH_SHORT).show();
+                    }
+
+                }
             }
         });
     }

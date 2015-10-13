@@ -14,9 +14,6 @@ import com.huan.jerp.data.News;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.GetListener;
-
 public class NewsActivity extends ActionBarActivity {
 
     @ViewInject(R.id.toolbar)
@@ -49,33 +46,21 @@ public class NewsActivity extends ActionBarActivity {
             }
         });
 
-
+        getSupportActionBar().setTitle("公告详情");
         Intent intent=getIntent();
-        String id=intent.getStringExtra("id_selected");
+        News news=intent.getParcelableExtra("selected_news");
+        title.setText(news.getTitle());
+        content.setText(news.getContent());
+        author.setText(news.getAuthor());
+        time.setText(intent.getStringExtra("time"));
 
-        BmobQuery<News> newsBmobQuery=new BmobQuery<News>();
-        newsBmobQuery.getObject(this, id, new GetListener<News>() {
-            @Override
-            public void onSuccess(News news) {
-                title.setText(news.getTitle());
-                content.setText(news.getContent());
-                author.setText(news.getAuthor());
-                time.setText(news.getCreatedAt());
-                getSupportActionBar().setTitle(news.getTitle());
-            }
-
-            @Override
-            public void onFailure(int i, String s) {
-
-            }
-        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 //        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_news, menu);
-        return true;
+        getMenuInflater().inflate(R.menu.menu_news, menu);
+        return false;
     }
 
     @Override

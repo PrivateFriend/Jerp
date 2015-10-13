@@ -9,15 +9,25 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@mipmap/pocketcast"
+        android:label="公司管家"
         android:theme="@style/RedTheme" >
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="27a2ad471605d5a331ab448facba88af" />
+
         <activity
             android:name=".activity.SplashActivity"
-            android:label="Jerp" >
+            android:label="C's Manager" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,6 +53,14 @@
         <activity
             android:name=".activity.UserProfileActivity"
             android:label="@string/title_activity_user_profile" >
+        </activity>
+        <activity
+            android:name=".activity.SelectPositionActivity"
+            android:label="@string/title_activity_select_position" >
+        </activity>
+        <activity
+            android:name=".activity.SignOtherActivity"
+            android:label="@string/title_activity_sign_other" >
         </activity>
     </application>
 

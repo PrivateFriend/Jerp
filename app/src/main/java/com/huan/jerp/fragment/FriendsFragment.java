@@ -5,14 +5,14 @@ package com.huan.jerp.fragment;
  */
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -36,94 +36,137 @@ import com.huan.jerp.address.SideBar;
 import com.huan.jerp.address.SortAdapter;
 import com.huan.jerp.address.SortModel;
 import com.huan.jerp.data.User;
+import com.huan.jerp.utils.AssistantUtil;
+import com.huan.jerp.utils.ConstantUtil;
+import com.huan.jerp.utils.HttpUtil;
+import com.lidroid.xutils.DbUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.datatype.BmobFile;
 
 
 public class FriendsFragment extends Fragment {
-
-    private List<ApplicationInfo> mAppList;
-
+    //----
+    private View parentView = null;
     private SwipeMenuListView sortListView;
+    private ClearEditText mClearEditText;
     private SideBar sideBar;
     private TextView dialog;
-    private SortAdapter adapter;
-    private ClearEditText mClearEditText;
-
-
-    private CharacterParser characterParser;
+    //----
     private List<SortModel> SourceDateList;
-
-
+    private List<User> list_users;
+    private SortAdapter adapter;
+    //----
     private PinyinComparator pinyinComparator;
-
-    public FriendsFragment() {
-        // Required empty public constructor
-    }
+    private CharacterParser characterParser;
+    //----
+    private DbUtils db = null;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View parentView = inflater.inflate(R.layout.fragment_friends, container, false);
+        try {
+            parentView = inflater.inflate(R.layout.fragment_friends, container, false);
+            //----
+            characterParser = CharacterParser.getInstance();
+            pinyinComparator = new PinyinComparator();
+            //----
+            initView();
+        } catch (Exception e) {
+            e.printStackTrace();
 
-        mAppList = getActivity().getPackageManager().getInstalledApplications(0);
+        }
+        return parentView;
+    }
 
-        characterParser = CharacterParser.getInstance();
+    private void initView() {
+        try {
+            //----
+            dialog = (TextView) parentView.findViewById(R.id.dialog);
+            sideBar = (SideBar) parentView.findViewById(R.id.sidrbar);
+            sideBar.setTextView(dialog);
+            sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
 
-        pinyinComparator = new PinyinComparator();
+                @Override
+                public void onTouchingLetterChanged(String s) {
+                    int position = adapter.getPositionForSection(s.charAt(0));
+                    if (position != -1) {
+                        sortListView.setSelection(position);
+                    }
 
-        sideBar = (SideBar) parentView.findViewById(R.id.sidrbar);
-        dialog = (TextView) parentView.findViewById(R.id.dialog);
-        sideBar.setTextView(dialog);
-
-        sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
-
-            @Override
-            public void onTouchingLetterChanged(String s) {
-                int position = adapter.getPositionForSection(s.charAt(0));
-                if(position != -1){
-                    sortListView.setSelection(position);
                 }
+            });
+            //----
+            mSwipeRefreshLayout = (SwipeRefreshLayout)parentView.findViewById(R.id.swipe_container);
+            //设置刷新时动画的颜色，可以设置4个
+            mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
-            }
-        });
-
-        sortListView = (SwipeMenuListView) parentView.findViewById(R.id.listView);
-
-        BmobQuery<User> users=new BmobQuery<User>();
-        users.findObjects(getActivity(), new FindListener<User>() {
-            @Override
-            public void onSuccess(List<User> list) {
-                String[] s=new String[list.size()];
-                for (int i=0;i<list.size();i++){
-                    s[i]=list.get(i).getName();
+                @Override
+                public void onRefresh() {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+                    }, 1000);
                 }
-                System.out.println(s);
-                SourceDateList=filledData(s);
+            });
+            //----
+            sortListView = (SwipeMenuListView) parentView.findViewById(R.id.listView);
+            //获取数据库缓存
+            getDataInCache();
+            if (null != list_users && list_users.size() > 0) {
+                setAdapter(false);
+            }
+            //获取后台数据
+            loadingData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-                Collections.sort(SourceDateList, pinyinComparator);
-                adapter = new SortAdapter(getActivity(), SourceDateList);
-                sortListView.setAdapter(adapter);
+    //设置适配器
+    private void setAdapter(Boolean fromNet) {
+
+        String[] s = new String[list_users.size()];
+        String[] h = new String[list_users.size()];
+        String[] phone = new String[list_users.size()];
+        for (int i = 0; i < list_users.size(); i++) {
+            s[i] = list_users.get(i).getName();
+
+            if (fromNet) {
+                BmobFile file = list_users.get(i).getPhoto();
+                if (file != null) {
+                    String icon_url = file.getFileUrl(getActivity().getBaseContext());
+                    h[i] = icon_url;
+                    list_users.get(i).setHead(icon_url);
+                } else {
+                    h[i] = null;
+                }
+            } else {
+                h[i] = list_users.get(i).getHead();
             }
 
-            @Override
-            public void onError(int i, String s) {
+            phone[i] = list_users.get(i).getMobilePhoneNumber();
+        }
+        SourceDateList = filledData(s, h, phone);
 
-            }
-        });
+        Collections.sort(SourceDateList, pinyinComparator);
+        adapter = new SortAdapter(getActivity(), SourceDateList);
+        sortListView.setAdapter(adapter);
 
-        SwipeMenuCreator creator=new SwipeMenuCreator() {
+        //----
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
             @Override
             public void create(SwipeMenu swipeMenu) {
                 // create "open" item
@@ -135,7 +178,7 @@ public class FriendsFragment extends Fragment {
                 // set item width
                 openItem.setWidth(dp2px(90));
                 // set item title
-                openItem.setTitle("Open");
+                openItem.setIcon(R.drawable.ic_dialer_sip_red_300_48dp);
                 // set item title fontsize
                 openItem.setTitleSize(18);
                 // set item title font color
@@ -152,36 +195,39 @@ public class FriendsFragment extends Fragment {
                 // set item width
                 deleteItem.setWidth(dp2px(90));
                 // set a icon
-                deleteItem.setIcon(R.drawable.ic_delete);
+                deleteItem.setIcon(R.drawable.ic_textsms_white_48dp);
                 // add to menu
                 swipeMenu.addMenuItem(deleteItem);
             }
-        };
-        // set creator
-        sortListView.setMenuCreator(creator);
 
-        // step 2. listener item click event
+
+        };
+        sortListView.setMenuCreator(creator);
         sortListView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                ApplicationInfo item = mAppList.get(position);
                 switch (index) {
                     case 0:
                         // open
-                        open(item);
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
+                                + SourceDateList.get(position).getPhone()));
+                        startActivity(intent);
                         break;
                     case 1:
                         // delete
-                        //					delete(item);
-                        mAppList.remove(position);
+
+                        Intent t = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"
+                                + SourceDateList.get(position).getPhone()));
+                        t.putExtra("sms_body", "");
+                        startActivity(t);
+
                         adapter.notifyDataSetChanged();
                         break;
                 }
                 return false;
             }
         });
-
-        // set SwipeListener
+        //设置滑动监听器
         sortListView.setOnSwipeListener(new SwipeMenuListView.OnSwipeListener() {
 
             @Override
@@ -194,11 +240,6 @@ public class FriendsFragment extends Fragment {
                 // swipe end
             }
         });
-
-        // other setting
-        //		listView.setCloseInterpolator(new BounceInterpolator());
-
-        // test item long click
         sortListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
@@ -208,35 +249,29 @@ public class FriendsFragment extends Fragment {
                 return false;
             }
         });
-
-
-
-
+        //----
         mClearEditText = (ClearEditText) parentView.findViewById(R.id.filter_edit);
-
-
         mClearEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                 filterData(s.toString());
             }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
                                           int after) {
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
+    }
 
-
-        // Inflate the layout for this fragment
-        return parentView;
+    private int dp2px(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics());
     }
 
     @Override
@@ -249,45 +284,47 @@ public class FriendsFragment extends Fragment {
         super.onDetach();
     }
 
-    private void filterData(String filterStr){
+    //--------------------------------------------------------------
+    //填充数据
+    private void filterData(String filterStr) {
         List<SortModel> filterDateList = new ArrayList<SortModel>();
 
-        if(TextUtils.isEmpty(filterStr)){
+        if (TextUtils.isEmpty(filterStr)) {
             filterDateList = SourceDateList;
-        }else{
+        } else {
             filterDateList.clear();
-            for(SortModel sortModel : SourceDateList){
+            for (SortModel sortModel : SourceDateList) {
                 String name = sortModel.getName();
-                if(name.indexOf(filterStr.toString()) != -1 || characterParser.getSelling(name).startsWith(filterStr.toString())){
+                if (name.indexOf(filterStr.toString()) != -1 || characterParser.getSelling(name).startsWith(filterStr.toString())) {
                     filterDateList.add(sortModel);
                 }
             }
         }
 
-
         Collections.sort(filterDateList, pinyinComparator);
         adapter.updateListView(filterDateList);
     }
 
-    private List<SortModel> filledData(String [] date){
+    private List<SortModel> filledData(String[] date, String[] head, String[] p) {
         List<SortModel> mSortList = new ArrayList<SortModel>();
 
-        for(int i=0; i<date.length; i++){
+        for (int i = 0; i < date.length; i++) {
             SortModel sortModel = new SortModel();
-            System.out.println(i);
+
             sortModel.setName(date[i]);
-
-
+            if (null != head[i]) {
+                sortModel.setHead(head[i]);
+            }
+            sortModel.setPhone(p[i]);
 
             String pinyin = characterParser.getSelling(date[i]);
 
             String sortString = pinyin.substring(0, 1).toUpperCase();
 
 
-
-            if(sortString.matches("[A-Z]")){
+            if (sortString.matches("[A-Z]")) {
                 sortModel.setSortLetters(sortString.toUpperCase());
-            }else{
+            } else {
                 sortModel.setSortLetters("#");
             }
 
@@ -297,30 +334,86 @@ public class FriendsFragment extends Fragment {
 
     }
 
-    private int dp2px(int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-                getResources().getDisplayMetrics());
-    }
 
-    private void open(ApplicationInfo item){
-        // open app
-        Intent resolveIntent = new Intent(Intent.ACTION_MAIN, null);
-        resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        resolveIntent.setPackage(item.packageName);
-        List<ResolveInfo> resolveInfoList = getActivity().getPackageManager()
-                .queryIntentActivities(resolveIntent, 0);
-        if (resolveInfoList != null && resolveInfoList.size() > 0) {
-            ResolveInfo resolveInfo = resolveInfoList.get(0);
-            String activityPackageName = resolveInfo.activityInfo.packageName;
-            String className = resolveInfo.activityInfo.name;
-
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            ComponentName componentName = new ComponentName(
-                    activityPackageName, className);
-
-            intent.setComponent(componentName);
-            startActivity(intent);
+    //-------------------------------------------------------------------
+    //本地数据库操作
+    /*
+    获取缓存中的联系人数据
+     */
+    private void getDataInCache() {
+        try {
+            db = DbUtils.create(getActivity());
+            if (db.tableIsExist(User.class)) {
+                list_users = db.findAll(User.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                db.close();
+            } catch (Exception ex) {
+            }
         }
     }
+
+    /*
+     保存联系人数据到缓存中
+      */
+    private void saveDataInCache(List<User> listData) {
+        try {
+            db = DbUtils.create(getActivity());
+            if (!db.tableIsExist(User.class)) {
+                db.createTableIfNotExist(User.class);
+            } else {
+                db.deleteAll(User.class);
+            }
+            if (null != listData) {
+                db.saveAll(listData);
+            }
+        } catch (Exception e) {
+            try {
+                db.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+
+    //-------------------------------------------------------------
+    //后台数据库操作
+    /*
+    加载网络数据
+    */
+    private void loadingData() {
+        //当前有网络
+        if (AssistantUtil.IsContectInterNet(getActivity())) {
+            HttpUtil.getUserListDataInNet(getActivity(), mHandler);
+        }
+    }
+
+    //获取后台数据
+    private Handler mHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            try {
+                if (msg.what == ConstantUtil.HANDLER_LOADING_DATA_FAIL) {
+                    Toast.makeText(getActivity(),"加载失败，请重试", Toast
+                            .LENGTH_SHORT)
+                            .show();
+                } else if (msg.what == ConstantUtil.HANDLER_LOADING_DATA_NULL) {
+                    Toast.makeText(getActivity(),"未创建数据", Toast
+                            .LENGTH_SHORT)
+                            .show();
+                } else if (msg.what == ConstantUtil.HANDLER_LOADING_DATA_SUCCESS) {
+                    list_users = (List<User>) msg.obj;
+                    setAdapter(true);
+                    //保存到本地缓存
+                    saveDataInCache(list_users);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    };
+
 }

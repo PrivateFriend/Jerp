@@ -16,18 +16,32 @@
         android:paddingTop="5dip"
         android:paddingBottom="5dip"
         android:text="A"/>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginLeft="5dip"
+    android:layout_marginTop="5dip"
+    android:layout_marginBottom="5dip">
 
+    <ImageView
+        android:id="@+id/head"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        />
     <TextView
         android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="center_vertical"
+        android:textSize="20sp"
         android:gravity="center_vertical"
         android:layout_weight="1.0"
-        android:textColor="#336598"
-        android:layout_marginLeft="5dip"
+        android:textColor="@color/text_color_primary"
+        android:layout_marginLeft="10dip"
         android:paddingTop="10dip"
         android:paddingBottom="10dip"
         android:text="hhhh"/>
+</LinearLayout>
 
 </LinearLayout>

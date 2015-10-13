@@ -15,10 +15,10 @@
             android:id="@+id/food_yc"
             android:icon="@mipmap/ic_video_library_black_24dp"
             android:title="签到"/>
-        <item
-            android:id="@+id/info_yc"
-            android:icon="@mipmap/ic_forum"
-            android:title="我的项目"/>
+        <!--<item-->
+            <!--android:id="@+id/info_yc"-->
+            <!--android:icon="@mipmap/ic_forum"-->
+            <!--android:title="我的项目"/>-->
     </group>
 
     <item android:title="Version">
@@ -28,10 +28,10 @@
                 android:icon="@mipmap/ic_receipt_black_24dp"
                 android:title="关于"/>
 
-            <item
-                android:id="@+id/setting"
-                android:icon="@mipmap/ic_settings_applications_black_24dp"
-                android:title="公司简介"/>
+            <!--<item-->
+                <!--android:id="@+id/setting"-->
+                <!--android:icon="@mipmap/ic_settings_applications_black_24dp"-->
+                <!--android:title="公司简介"/>-->
         </menu>
     </item>
 

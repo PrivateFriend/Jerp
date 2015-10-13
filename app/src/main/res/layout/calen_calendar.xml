@@ -4,10 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp">
 
         <ImageView
             android:id="@+id/prevMonth"
@@ -20,12 +29,13 @@
         <TextView
             android:id="@+id/currentMonth"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="40dp"
             android:layout_weight="3"
             android:gravity="center"
             android:text="2014年6月"
-            android:textColor="#177ed6"
-            android:textSize="18dp" />
+            android:textColor="@color/black"
+            android:textSize="25dp"
+            />
 
         <ImageView
             android:id="@+id/nextMonth"
@@ -75,12 +85,21 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginTop="10dp"
         android:background="@color/grey" />
 
     <ViewFlipper
         android:id="@+id/flipper"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -90,7 +109,7 @@
             android:id="@+id/iv_zhoumo"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:background="#177ED6"
+            android:background="@color/deep_purple"
             android:layout_weight="1"/>
         <ImageView
             android:id="@+id/iv_qingjia"
@@ -98,12 +117,7 @@
             android:layout_height="30dp"
             android:background="@color/dark_red"
             android:layout_weight="1"/>
-        <ImageView
-            android:id="@+id/iv_normal"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:background="@color/black"
-            android:layout_weight="1"/>
+
 
     </LinearLayout>
 
@@ -111,13 +125,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="bottom">
+        >
         <TextView
             android:id="@+id/tv_zhoumo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="周末"
+            android:text="迟到"
             android:gravity="center"/>
         <TextView
             android:id="@+id/tv_qingjia"
@@ -126,14 +140,7 @@
             android:layout_weight="1"
             android:text="请假"
             android:gravity="center"/>
-        <TextView
-            android:id="@+id/tv_normal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="正常"
-            android:gravity="center"/>
 
     </LinearLayout>
-
+</LinearLayout>
 </LinearLayout>

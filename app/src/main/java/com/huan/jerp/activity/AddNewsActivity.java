@@ -1,5 +1,6 @@
 package com.huan.jerp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -7,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -30,14 +30,6 @@ public class AddNewsActivity extends AppCompatActivity {
     private FloatingActionButton bt_submit;
     @ViewInject(R.id.toolbar)
     private Toolbar toolbar;
-    @ViewInject(R.id.checkBox1)
-    private CheckBox cb_shichang;
-    @ViewInject(R.id.checkBox2)
-    private CheckBox cb_caiwu;
-    @ViewInject(R.id.checkBox3)
-    private CheckBox cb_yingxiao;
-    @ViewInject(R.id.checkbox4)
-    private CheckBox cb_jishu;
 
 
     @Override
@@ -67,6 +59,7 @@ public class AddNewsActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         Toast.makeText(getApplication(), "提交成功", Toast.LENGTH_SHORT).show();
+                        backNews();
                     }
 
                     @Override
@@ -78,11 +71,16 @@ public class AddNewsActivity extends AppCompatActivity {
         });
     }
 
+    private void backNews() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_add_news, menu);
-        return true;
+        return false;
     }
 
     @Override

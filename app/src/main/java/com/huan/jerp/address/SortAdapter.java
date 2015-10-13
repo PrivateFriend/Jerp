@@ -5,9 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 import com.huan.jerp.R;
+import com.huan.jerp.View.CircleTransformation;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -54,6 +57,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
             view = LayoutInflater.from(mContext).inflate(R.layout.item, null);
             viewHolder.tvTitle = (TextView) view.findViewById(R.id.title);
             viewHolder.tvLetter = (TextView) view.findViewById(R.id.catalog);
+            viewHolder.ivHead= (ImageView) view.findViewById(R.id.head);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -64,13 +68,19 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 
 
         if(position == getPositionForSection(section)){
-            viewHolder.tvLetter.setVisibility(View.VISIBLE);
+//            viewHolder.tvLetter.setVisibility(View.VISIBLE);
+            viewHolder.tvLetter.setVisibility(View.GONE);
             viewHolder.tvLetter.setText(mContent.getSortLetters());
         }else{
             viewHolder.tvLetter.setVisibility(View.GONE);
         }
 
         viewHolder.tvTitle.setText(this.list.get(position).getName());
+        if(null!=list.get(position).getHead()&&!list.get(position).getHead().isEmpty()){
+            Picasso.with(mContext).load(list.get(position).getHead()).transform(new CircleTransformation()).into(viewHolder.ivHead);
+        }else {
+            Picasso.with(mContext).load(R.mipmap.ic_user).transform(new CircleTransformation()).into(viewHolder.ivHead);
+        }
 
         return view;
 
@@ -81,6 +91,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
     final static class ViewHolder {
         TextView tvLetter;
         TextView tvTitle;
+        ImageView ivHead;
     }
 
 
